@@ -2,554 +2,397 @@
 
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; script-src-elem 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; style-src-elem 'self' 'unsafe-inline'; script-src-attr 'none'; style-src-attr 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; manifest-src 'none'; connect-src 'none'; prefetch-src 'none'; navigate-to 'self'; img-src 'self' data: blob:; font-src 'self' data:; media-src 'none'; upgrade-insecure-requests;">
-  <title>Competitive Heatmap Visualizer</title>
-  <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-
-```
-:root {
-  --bg-primary: #0f0f0f;
-  --bg-secondary: #1a1a1a;
-  --bg-tertiary: #252525;
-  --text-primary: #f0f0f0;
-  --text-secondary: #a0a0a0;
-  --text-muted: #666666;
-  --accent: #6366f1;
-  --accent-hover: #818cf8;
-  --border: #333333;
-  --error: #ef4444;
-  --warning: #f59e0b;
-  --success: #22c55e;
-  --radius: 8px;
-  --radius-lg: 12px;
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="dark">
+<title>Competitive Heatmap Visualizer</title>
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
-  font-size: 16px;
+font-size: 16px;
+-webkit-text-size-adjust: 100%;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.6;
-  min-height: 100vh;
+font-family: -apple-system, BlinkMacSystemFont, “Segoe UI”, Roboto, Helvetica, Arial, sans-serif;
+background-color: #0f0f0f;
+color: #f0f0f0;
+line-height: 1.6;
+min-height: 100vh;
+padding: 16px;
 }
 
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1.5rem;
+max-width: 900px;
+margin: 0 auto;
 }
 
 header {
-  text-align: center;
-  margin-bottom: 2rem;
+text-align: center;
+margin-bottom: 24px;
 }
 
 h1 {
-  font-size: 1.75rem;
-  margin: 0 0 0.5rem 0;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--accent), #a855f7);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+font-size: 1.5rem;
+font-weight: 700;
+color: #a78bfa;
+margin-bottom: 8px;
 }
 
 .subtitle {
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-  margin: 0;
+color: #9ca3af;
+font-size: 0.9rem;
 }
 
 .card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
+background-color: #1a1a1a;
+border: 1px solid #333333;
+border-radius: 12px;
+padding: 16px;
+margin-bottom: 16px;
 }
 
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+.card-title {
+font-size: 1rem;
+font-weight: 600;
+color: #f0f0f0;
+margin-bottom: 12px;
+display: flex;
+align-items: center;
+gap: 8px;
 }
 
-.card-header h2 {
-  font-size: 1rem;
-  margin: 0;
-  font-weight: 600;
+.card-description {
+font-size: 0.85rem;
+color: #9ca3af;
+margin-bottom: 12px;
 }
 
-.card-icon {
-  font-size: 1.25rem;
-}
-
-.prompt-recipe {
-  background: var(--bg-tertiary);
-  border-radius: var(--radius);
-  padding: 1rem;
-  font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-  font-size: 0.85rem;
-  white-space: pre-wrap;
-  word-break: break-word;
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-}
-
-.copy-prompt-btn {
-  display: block;
-  width: 100%;
-  margin-top: 1rem;
-}
-
-.input-section label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-}
-
-textarea {
-  width: 100%;
-  min-height: 200px;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem;
-  font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-  font-size: 0.85rem;
-  color: var(--text-primary);
-  resize: vertical;
-  transition: border-color 0.2s;
-}
-
-textarea:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-}
-
-textarea::placeholder {
-  color: var(--text-muted);
-}
-
-.btn-group {
-  display: flex;
-  flex-direction: row;
-  gap: 0.75rem;
-  margin-top: 1rem;
-  flex-wrap: wrap;
+.prompt-box {
+background-color: #252525;
+border: 1px solid #404040;
+border-radius: 8px;
+padding: 12px;
+font-family: “SF Mono”, Monaco, “Cascadia Code”, “Courier New”, monospace;
+font-size: 0.8rem;
+color: #e5e5e5;
+white-space: pre-wrap;
+word-break: break-word;
+overflow-x: auto;
+margin-bottom: 12px;
 }
 
 .btn {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: var(--radius);
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-height: 44px;
-  min-width: 44px;
-  text-align: center;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+display: block;
+width: 100%;
+padding: 14px 20px;
+font-size: 1rem;
+font-weight: 600;
+text-align: center;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+-webkit-appearance: none;
+appearance: none;
+touch-action: manipulation;
 }
 
 .btn-primary {
-  background: var(--accent);
-  color: white;
+background-color: #6366f1;
+color: #ffffff;
 }
 
-.btn-primary:hover, .btn-primary:focus {
-  background: var(--accent-hover);
+.btn-primary:active {
+background-color: #4f46e5;
 }
 
 .btn-secondary {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
+background-color: #374151;
+color: #ffffff;
+margin-top: 10px;
 }
 
-.btn-secondary:hover, .btn-secondary:focus {
-  background: var(--border);
+.btn-secondary:active {
+background-color: #4b5563;
 }
 
-.btn:focus-visible {
-  outline: 2px solid var(--accent-hover);
-  outline-offset: 2px;
+.input-label {
+display: block;
+font-size: 0.9rem;
+font-weight: 500;
+color: #e5e5e5;
+margin-bottom: 8px;
 }
 
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.textarea-input {
+display: block;
+width: 100%;
+min-height: 180px;
+padding: 12px;
+font-family: “SF Mono”, Monaco, “Cascadia Code”, “Courier New”, monospace;
+font-size: 0.85rem;
+color: #f0f0f0;
+background-color: #252525;
+border: 1px solid #404040;
+border-radius: 8px;
+resize: vertical;
+-webkit-appearance: none;
+appearance: none;
 }
 
-.status-message {
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius);
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  display: none;
+.textarea-input:focus {
+outline: none;
+border-color: #6366f1;
 }
 
-.status-message.visible {
-  display: block;
+.link-btn {
+display: block;
+background: none;
+border: none;
+color: #818cf8;
+font-size: 0.85rem;
+padding: 10px 0;
+cursor: pointer;
+text-decoration: underline;
+text-align: left;
+-webkit-appearance: none;
+appearance: none;
 }
 
-.status-message.error {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid var(--error);
-  color: var(--error);
+.btn-row {
+display: flex;
+flex-direction: column;
+gap: 10px;
+margin-top: 12px;
 }
 
-.status-message.success {
-  background: rgba(34, 197, 94, 0.15);
-  border: 1px solid var(--success);
-  color: var(--success);
+.status-box {
+padding: 12px;
+border-radius: 8px;
+font-size: 0.9rem;
+margin-top: 12px;
+display: none;
 }
 
-.status-message.warning {
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid var(--warning);
-  color: var(--warning);
+.status-box.show {
+display: block;
 }
 
-.heatmap-section {
-  display: none;
+.status-box.error {
+background-color: rgba(239, 68, 68, 0.15);
+border: 1px solid #ef4444;
+color: #fca5a5;
 }
 
-.heatmap-section.visible {
-  display: block;
+.status-box.success {
+background-color: rgba(34, 197, 94, 0.15);
+border: 1px solid #22c55e;
+color: #86efac;
 }
 
-.legend {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  font-size: 0.85rem;
+.status-box.warning {
+background-color: rgba(245, 158, 11, 0.15);
+border: 1px solid #f59e0b;
+color: #fcd34d;
 }
 
-.legend-label {
-  color: var(--text-secondary);
+.heatmap-card {
+display: none;
 }
 
-.legend-scale {
-  display: flex;
-  gap: 0.25rem;
+.heatmap-card.show {
+display: block;
 }
 
-.legend-item {
-  width: 2rem;
-  height: 1.5rem;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: white;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+.legend-row {
+display: flex;
+align-items: center;
+gap: 6px;
+margin-bottom: 12px;
+flex-wrap: wrap;
+font-size: 0.8rem;
+color: #9ca3af;
 }
 
-.heatmap-container {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+.legend-colors {
+display: flex;
+gap: 4px;
 }
 
-.heatmap-table {
-  border-collapse: separate;
-  border-spacing: 3px;
-  min-width: 100%;
+.legend-box {
+width: 28px;
+height: 24px;
+border-radius: 4px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 0.75rem;
+font-weight: 700;
+color: #ffffff;
 }
 
-.heatmap-table th,
-.heatmap-table td {
-  padding: 0.6rem 0.75rem;
-  text-align: center;
-  border-radius: 6px;
-  font-size: 0.85rem;
+.heatmap-scroll {
+overflow-x: auto;
+-webkit-overflow-scrolling: touch;
 }
 
-.heatmap-table th {
-  background: var(--bg-tertiary);
-  color: var(--text-secondary);
-  font-weight: 600;
-  white-space: nowrap;
+.heatmap-grid {
+border-collapse: separate;
+border-spacing: 4px;
+min-width: 100%;
 }
 
-.heatmap-table th.corner {
-  background: transparent;
+.heatmap-grid th,
+.heatmap-grid td {
+padding: 10px 8px;
+text-align: center;
+border-radius: 6px;
+font-size: 0.8rem;
 }
 
-.heatmap-table th.feature-header {
-  max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.heatmap-grid th {
+background-color: #252525;
+color: #9ca3af;
+font-weight: 600;
 }
 
-.heatmap-table td.competitor-name {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  font-weight: 500;
-  text-align: left;
-  white-space: nowrap;
-  max-width: 150px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.heatmap-grid th.corner-cell {
+background-color: transparent;
 }
 
-.heatmap-cell {
-  font-weight: 700;
-  color: white;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-  cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
-  min-width: 50px;
-  position: relative;
+.heatmap-grid td.row-label {
+background-color: #252525;
+color: #e5e5e5;
+font-weight: 500;
+text-align: left;
+white-space: nowrap;
 }
 
-.heatmap-cell:hover,
-.heatmap-cell:focus {
-  transform: scale(1.08);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-  z-index: 10;
+.heatmap-grid td.score-cell {
+font-weight: 700;
+color: #ffffff;
+cursor: pointer;
+min-width: 44px;
 }
 
-.heatmap-cell:focus {
-  outline: 2px solid white;
-  outline-offset: 2px;
+.popup-overlay {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: rgba(0, 0, 0, 0.6);
+z-index: 1000;
+padding: 20px;
+overflow-y: auto;
 }
 
-.tooltip {
-  position: fixed;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 0.75rem 1rem;
-  max-width: 280px;
-  box-shadow: var(--shadow);
-  z-index: 1000;
-  opacity: 0;
-  transition: opacity 0.15s;
-  font-size: 0.85rem;
-  pointer-events: none;
+.popup-overlay.show {
+display: flex;
+align-items: center;
+justify-content: center;
 }
 
-.tooltip.visible {
-  opacity: 1;
-  pointer-events: auto;
+.popup-content {
+background-color: #1a1a1a;
+border: 1px solid #404040;
+border-radius: 12px;
+padding: 20px;
+max-width: 320px;
+width: 100%;
+position: relative;
 }
 
-.tooltip-close {
-  position: absolute;
-  top: 0.25rem;
-  right: 0.25rem;
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  font-size: 1.1rem;
-  line-height: 1;
-  transition: color 0.15s, background 0.15s;
+.popup-close {
+position: absolute;
+top: 12px;
+right: 12px;
+background: none;
+border: none;
+color: #9ca3af;
+font-size: 1.5rem;
+cursor: pointer;
+padding: 4px;
+line-height: 1;
 }
 
-.tooltip-close:hover,
-.tooltip-close:focus {
-  color: var(--text-primary);
-  background: var(--bg-tertiary);
+.popup-title {
+font-size: 1rem;
+font-weight: 600;
+color: #f0f0f0;
+margin-bottom: 4px;
+padding-right: 30px;
 }
 
-.tooltip-close:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
+.popup-score {
+font-size: 0.85rem;
+color: #9ca3af;
+margin-bottom: 12px;
 }
 
-.tooltip-header {
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-  color: var(--text-primary);
-  padding-right: 1.5rem;
+.popup-comment {
+font-size: 0.9rem;
+color: #e5e5e5;
+line-height: 1.5;
 }
 
-.tooltip-score {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  margin-bottom: 0.5rem;
+.privacy-box {
+background-color: #1a1a1a;
+border: 1px solid #333333;
+border-radius: 8px;
+padding: 16px;
+margin-top: 24px;
+font-size: 0.8rem;
+color: #9ca3af;
 }
 
-.tooltip-comment {
-  color: var(--text-primary);
-  line-height: 1.5;
+.privacy-box h3 {
+font-size: 0.85rem;
+color: #e5e5e5;
+margin-bottom: 8px;
 }
 
-footer {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
+.privacy-box ul {
+margin: 8px 0 0 0;
+padding-left: 20px;
 }
 
-.privacy-notice {
-  background: var(--bg-secondary);
-  border-radius: var(--radius);
-  padding: 1rem;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
+.privacy-box li {
+margin-bottom: 4px;
 }
 
-.privacy-notice h3 {
-  font-size: 0.85rem;
-  color: var(--text-primary);
-  margin: 0 0 0.5rem 0;
+@media (min-width: 600px) {
+.btn-row {
+flex-direction: row;
 }
 
-.privacy-notice ul {
-  margin: 0.5rem 0 0 0;
-  padding-left: 1.25rem;
+.btn-row .btn {
+flex: 1;
 }
-
-.privacy-notice li {
-  margin-bottom: 0.25rem;
 }
+</style>
 
-.example-toggle {
-  display: block;
-  background: none;
-  border: none;
-  color: var(--accent);
-  cursor: pointer;
-  font-size: 0.85rem;
-  padding: 0.5rem 0;
-  text-decoration: underline;
-  min-height: 44px;
-  width: 100%;
-  text-align: left;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-.example-toggle:hover,
-.example-toggle:focus {
-  color: var(--accent-hover);
-}
-
-.example-toggle:focus-visible {
-  outline: 2px solid var(--accent-hover);
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-  }
-  
-  .heatmap-cell:hover,
-  .heatmap-cell:focus {
-    transform: none;
-  }
-}
-
-@media (max-width: 600px) {
-  .container {
-    padding: 1rem;
-  }
-
-  h1 {
-    font-size: 1.5rem;
-  }
-
-  .card {
-    padding: 1rem;
-    overflow: visible;
-  }
-
-  .prompt-recipe {
-    font-size: 0.75rem;
-    padding: 0.75rem;
-    overflow-x: auto;
-  }
-
-  .btn-group {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .btn {
-    display: block;
-    width: 100%;
-  }
-
-  .copy-prompt-btn {
-    display: block;
-    width: 100%;
-  }
-
-  .example-toggle {
-    display: block;
-    width: 100%;
-    text-align: center;
-  }
-
-  .heatmap-table th,
-  .heatmap-table td {
-    padding: 0.5rem;
-    font-size: 0.8rem;
-  }
-
-  .heatmap-cell {
-    min-width: 40px;
-  }
-}
-```
-
-  </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>📊 Competitive Heatmap Visualizer</h1>
-      <p class="subtitle">Transform LLM competitive analysis into visual insights</p>
-    </header>
 
-```
-<main>
-  <section class="card">
-    <div class="card-header">
-      <span class="card-icon">📝</span>
-      <h2>Prompt Recipe</h2>
-    </div>
-    <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 0.75rem 0;">
-      Copy this prompt, customize it, and send to your preferred LLM:
-    </p>
-    <div class="prompt-recipe" id="promptRecipe">Compare [Company A, Company B, Company C] on these features: [Feature 1, Feature 2, Feature 3].
-```
+<div class="container">
+  <header>
+    <h1>Competitive Heatmap Visualizer</h1>
+    <p class="subtitle">Transform LLM competitive analysis into visual insights</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2 class="card-title">Prompt Recipe</h2>
+      <p class="card-description">Copy this prompt, customize it, and send to your preferred LLM:</p>
+      <div class="prompt-box" id="promptText">Compare [Company A, Company B, Company C] on these features: [Feature 1, Feature 2, Feature 3].
 
 Return ONLY a JSON code block with no other text. Use this exact format:
 
@@ -573,516 +416,389 @@ Rules:
 - Scores must be integers from 1 (worst) to 5 (best)
 - Include a brief comment explaining each score
 - Output ONLY the JSON code block, nothing else</div>
-  <button class="btn btn-primary copy-prompt-btn" id="copyPromptBtn" type="button">📋 Copy Prompt to Clipboard</button>
-  </section>
+  <button type="button" class="btn btn-primary" id="copyBtn">Copy Prompt to Clipboard</button>
   
-  ```
-  <section class="card input-section">
-    <div class="card-header">
-      <span class="card-icon">📋</span>
-      <h2>Paste LLM Output</h2>
-    </div>
-    <label for="jsonInput">Paste the JSON response from your LLM:</label>
-    <textarea id="jsonInput" placeholder='Paste your JSON here. Example format:
-  ```
-
-{
-“competitors”: {
-“Slack”: {
-“Pricing”: {“score”: 3, “comment”: “Mid-range pricing”},
-“Integrations”: {“score”: 5, “comment”: “Excellent ecosystem”}
-},
-“Teams”: {
-“Pricing”: {“score”: 4, “comment”: “Bundled with M365”},
-“Integrations”: {“score”: 4, “comment”: “Strong Microsoft ecosystem”}
-}
-}
-}’></textarea>
-<button class="example-toggle" id="loadExampleBtn" type="button">Load example data</button>
-<div class="btn-group">
-<button class="btn btn-primary" id="generateBtn" type="button">Generate Heatmap</button>
-<button class="btn btn-secondary" id="clearBtn" type="button">Clear</button>
-</div>
-<div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
-</section>
-
-```
-  <section class="card heatmap-section" id="heatmapSection">
-    <div class="card-header">
-      <span class="card-icon">🗺️</span>
-      <h2>Competitive Heatmap</h2>
-    </div>
-    <div class="legend">
-      <span class="legend-label">Score:</span>
-      <div class="legend-scale" id="legendScale"></div>
-      <span class="legend-label" style="margin-left: 0.5rem;">(1 = Weak, 5 = Strong)</span>
-    </div>
-    <div class="heatmap-container">
-      <table class="heatmap-table" id="heatmapTable" role="grid" aria-label="Competitive analysis heatmap"></table>
-    </div>
-  </section>
-</main>
-
-<footer>
-  <div class="privacy-notice">
-    <h3>🔒 Privacy Notice</h3>
-    <p>This tool processes data locally in your browser. It does not upload your data to any server.</p>
+    </section>
+  
+    <section class="card">
+      <h2 class="card-title">Paste LLM Output</h2>
+      <label class="input-label" for="jsonInput">Paste the JSON response from your LLM:</label>
+      <textarea id="jsonInput" class="textarea-input" placeholder="Paste your JSON here..."></textarea>
+      <button type="button" class="link-btn" id="exampleBtn">Load example data</button>
+      <div class="btn-row">
+        <button type="button" class="btn btn-primary" id="generateBtn">Generate Heatmap</button>
+        <button type="button" class="btn btn-secondary" id="clearBtn">Clear</button>
+      </div>
+      <div class="status-box" id="statusBox" role="status"></div>
+    </section>
+  
+    <section class="card heatmap-card" id="heatmapCard">
+      <h2 class="card-title">Competitive Heatmap</h2>
+      <div class="legend-row">
+        <span>Score:</span>
+        <div class="legend-colors" id="legendColors"></div>
+        <span>(1=Weak, 5=Strong)</span>
+      </div>
+      <div class="heatmap-scroll">
+        <table class="heatmap-grid" id="heatmapTable"></table>
+      </div>
+    </section>
+  </main>
+  
+  <footer class="privacy-box">
+    <h3>Privacy Notice</h3>
+    <p>This tool processes data locally in your browser. No data is uploaded to any server.</p>
     <ul>
-      <li>✓ No uploads – all processing happens in your browser</li>
-      <li>✓ No cookies or tracking</li>
-      <li>✓ No account required</li>
-      <li>✓ No background network requests</li>
-      <li>✓ No analytics, beacons, or telemetry</li>
+      <li>No uploads - all processing happens locally</li>
+      <li>No cookies or tracking</li>
+      <li>No account required</li>
+      <li>No background network requests</li>
     </ul>
+  </footer>
+
+</div>
+
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup-content">
+    <button type="button" class="popup-close" id="popupClose" aria-label="Close">&times;</button>
+    <div class="popup-title" id="popupTitle"></div>
+    <div class="popup-score" id="popupScore"></div>
+    <div class="popup-comment" id="popupComment"></div>
   </div>
-</footer>
-```
+</div>
 
-  </div>
+<script>
+(function() {
+  "use strict";
 
-  <div class="tooltip" id="tooltip" role="tooltip" aria-hidden="true">
-    <button class="tooltip-close" id="tooltipClose" type="button" aria-label="Close tooltip">✕</button>
-    <div class="tooltip-header" id="tooltipHeader"></div>
-    <div class="tooltip-score" id="tooltipScore"></div>
-    <div class="tooltip-comment" id="tooltipComment"></div>
-  </div>
+  var MAX_COMPETITORS = 20;
+  var MAX_FEATURES = 30;
+  var MAX_INPUT = 102400;
 
-  <script>
-    (function() {
-      'use strict';
+  var promptText = document.getElementById("promptText");
+  var copyBtn = document.getElementById("copyBtn");
+  var jsonInput = document.getElementById("jsonInput");
+  var exampleBtn = document.getElementById("exampleBtn");
+  var generateBtn = document.getElementById("generateBtn");
+  var clearBtn = document.getElementById("clearBtn");
+  var statusBox = document.getElementById("statusBox");
+  var heatmapCard = document.getElementById("heatmapCard");
+  var heatmapTable = document.getElementById("heatmapTable");
+  var legendColors = document.getElementById("legendColors");
+  var popupOverlay = document.getElementById("popupOverlay");
+  var popupClose = document.getElementById("popupClose");
+  var popupTitle = document.getElementById("popupTitle");
+  var popupScore = document.getElementById("popupScore");
+  var popupComment = document.getElementById("popupComment");
 
-      const MAX_COMPETITORS = 20;
-      const MAX_FEATURES = 30;
-      const MAX_INPUT_LENGTH = 102400;
-      const MAX_NAME_LENGTH = 50;
-      const MAX_FEATURE_LENGTH = 40;
-      const MAX_COMMENT_LENGTH = 500;
-
-      const elements = {
-        promptRecipe: document.getElementById('promptRecipe'),
-        copyPromptBtn: document.getElementById('copyPromptBtn'),
-        jsonInput: document.getElementById('jsonInput'),
-        loadExampleBtn: document.getElementById('loadExampleBtn'),
-        generateBtn: document.getElementById('generateBtn'),
-        clearBtn: document.getElementById('clearBtn'),
-        statusMessage: document.getElementById('statusMessage'),
-        heatmapSection: document.getElementById('heatmapSection'),
-        heatmapTable: document.getElementById('heatmapTable'),
-        legendScale: document.getElementById('legendScale'),
-        tooltip: document.getElementById('tooltip'),
-        tooltipClose: document.getElementById('tooltipClose'),
-        tooltipHeader: document.getElementById('tooltipHeader'),
-        tooltipScore: document.getElementById('tooltipScore'),
-        tooltipComment: document.getElementById('tooltipComment')
-      };
-
-      const exampleData = {
-        competitors: {
-          "Slack": {
-            "Pricing": { score: 3, comment: "Mid-range pricing. Free tier available but limited. Paid plans start at $7.25/user/month." },
-            "Integrations": { score: 5, comment: "Excellent ecosystem with 2,400+ apps. Best-in-class third-party integration support." },
-            "Search": { score: 4, comment: "Powerful search with filters. Message history limited on free plan." },
-            "Video Calls": { score: 3, comment: "Huddles feature is good for quick calls. Limited compared to dedicated tools." }
-          },
-          "Microsoft Teams": {
-            "Pricing": { score: 4, comment: "Bundled with Microsoft 365. Excellent value for existing M365 subscribers." },
-            "Integrations": { score: 4, comment: "Strong Microsoft ecosystem integration. Third-party apps growing but fewer than Slack." },
-            "Search": { score: 3, comment: "Basic search functionality. Can be slow with large message volumes." },
-            "Video Calls": { score: 5, comment: "Excellent video conferencing with advanced features like Together Mode and breakout rooms." }
-          },
-          "Discord": {
-            "Pricing": { score: 5, comment: "Generous free tier. Nitro subscription adds perks but not essential for core functionality." },
-            "Integrations": { score: 3, comment: "Bot ecosystem is strong. Business integrations limited compared to enterprise tools." },
-            "Search": { score: 2, comment: "Basic search. No advanced filters. Can struggle in large servers." },
-            "Video Calls": { score: 4, comment: "Good quality video and screen sharing. Stage channels for larger audiences." }
-          },
-          "Zoom": {
-            "Pricing": { score: 3, comment: "Free tier has 40-min limit. Paid plans competitive but can add up with add-ons." },
-            "Integrations": { score: 4, comment: "Good integration with calendars and productivity tools. Zoom Apps marketplace growing." },
-            "Search": { score: 2, comment: "Limited chat search. Primary focus is on video, not messaging." },
-            "Video Calls": { score: 5, comment: "Industry-leading video quality and reliability. Extensive features for webinars and large meetings." }
-          }
-        }
-      };
-
-      function init() {
-        buildLegend();
-        attachEventListeners();
+  var exampleData = {
+    competitors: {
+      "Slack": {
+        "Pricing": {score: 3, comment: "Mid-range pricing. Free tier available but limited."},
+        "Integrations": {score: 5, comment: "Excellent ecosystem with 2,400+ apps."},
+        "Search": {score: 4, comment: "Powerful search with filters."},
+        "Video Calls": {score: 3, comment: "Huddles feature is good for quick calls."}
+      },
+      "Microsoft Teams": {
+        "Pricing": {score: 4, comment: "Bundled with Microsoft 365. Great value."},
+        "Integrations": {score: 4, comment: "Strong Microsoft ecosystem integration."},
+        "Search": {score: 3, comment: "Basic search functionality."},
+        "Video Calls": {score: 5, comment: "Excellent video conferencing features."}
+      },
+      "Discord": {
+        "Pricing": {score: 5, comment: "Generous free tier."},
+        "Integrations": {score: 3, comment: "Bot ecosystem is strong but limited business tools."},
+        "Search": {score: 2, comment: "Basic search. No advanced filters."},
+        "Video Calls": {score: 4, comment: "Good quality video and screen sharing."}
+      },
+      "Zoom": {
+        "Pricing": {score: 3, comment: "Free tier has 40-min limit."},
+        "Integrations": {score: 4, comment: "Good calendar and productivity integrations."},
+        "Search": {score: 2, comment: "Limited chat search."},
+        "Video Calls": {score: 5, comment: "Industry-leading video quality."}
       }
+    }
+  };
 
-      function buildLegend() {
-        for (let score = 1; score <= 5; score++) {
-          const item = document.createElement('div');
-          item.className = 'legend-item';
-          item.style.backgroundColor = getScoreColor(score);
-          item.textContent = score;
-          elements.legendScale.appendChild(item);
-        }
+  var scoreColors = {
+    1: "#b91c1c",
+    2: "#c2410c",
+    3: "#a16207",
+    4: "#4d7c0f",
+    5: "#15803d"
+  };
+
+  function init() {
+    buildLegend();
+    copyBtn.addEventListener("click", handleCopy);
+    exampleBtn.addEventListener("click", handleExample);
+    generateBtn.addEventListener("click", handleGenerate);
+    clearBtn.addEventListener("click", handleClear);
+    popupClose.addEventListener("click", hidePopup);
+    popupOverlay.addEventListener("click", function(e) {
+      if (e.target === popupOverlay) {
+        hidePopup();
       }
-
-      function attachEventListeners() {
-        elements.copyPromptBtn.addEventListener('click', handleCopyPrompt);
-        elements.loadExampleBtn.addEventListener('click', handleLoadExample);
-        elements.generateBtn.addEventListener('click', handleGenerate);
-        elements.clearBtn.addEventListener('click', handleClear);
-        elements.tooltipClose.addEventListener('click', hideTooltip);
-        document.addEventListener('keydown', handleTooltipKeyboard);
-        document.addEventListener('click', handleOutsideClick);
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") {
+        hidePopup();
       }
+    });
+  }
 
-      function handleCopyPrompt() {
-        const text = elements.promptRecipe.textContent;
-        
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(function() {
-            showCopyFeedback(true);
-          }).catch(function() {
-            showCopyFeedback(false);
-          });
-        } else {
-          showCopyFeedback(false);
-        }
-      }
+  function buildLegend() {
+    for (var i = 1; i <= 5; i++) {
+      var box = document.createElement("div");
+      box.className = "legend-box";
+      box.style.backgroundColor = scoreColors[i];
+      box.textContent = i;
+      legendColors.appendChild(box);
+    }
+  }
 
-      function showCopyFeedback(success) {
-        const originalText = elements.copyPromptBtn.textContent;
-        elements.copyPromptBtn.textContent = success ? '✓ Copied to Clipboard!' : '✗ Copy Failed';
-        elements.copyPromptBtn.disabled = true;
+  function handleCopy() {
+    var text = promptText.textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function() {
+        copyBtn.textContent = "Copied!";
         setTimeout(function() {
-          elements.copyPromptBtn.textContent = '📋 Copy Prompt to Clipboard';
-          elements.copyPromptBtn.disabled = false;
+          copyBtn.textContent = "Copy Prompt to Clipboard";
         }, 2000);
-      }
+      }).catch(function() {
+        copyBtn.textContent = "Copy failed";
+        setTimeout(function() {
+          copyBtn.textContent = "Copy Prompt to Clipboard";
+        }, 2000);
+      });
+    } else {
+      copyBtn.textContent = "Copy not supported";
+      setTimeout(function() {
+        copyBtn.textContent = "Copy Prompt to Clipboard";
+      }, 2000);
+    }
+  }
 
-      function handleLoadExample() {
-        elements.jsonInput.value = JSON.stringify(exampleData, null, 2);
-        showStatus('Example data loaded. Click "Generate Heatmap" to visualize.', 'success');
-      }
+  function handleExample() {
+    jsonInput.value = JSON.stringify(exampleData, null, 2);
+    showStatus("Example data loaded. Click Generate Heatmap.", "success");
+  }
 
-      function handleGenerate() {
-        const input = elements.jsonInput.value.trim();
-        
-        if (!input) {
-          showStatus('Please paste JSON data from your LLM.', 'error');
-          return;
-        }
+  function handleGenerate() {
+    var input = jsonInput.value.trim();
 
-        if (input.length > MAX_INPUT_LENGTH) {
-          showStatus('Input too large. Maximum ' + Math.round(MAX_INPUT_LENGTH / 1024) + 'KB allowed.', 'error');
-          return;
-        }
+    if (!input) {
+      showStatus("Please paste JSON data first.", "error");
+      return;
+    }
 
-        let data;
-        try {
-          data = parseInput(input);
-        } catch (e) {
-          showStatus('Invalid JSON: ' + e.message, 'error');
-          console.error('JSON parse error:', e);
-          return;
-        }
+    if (input.length > MAX_INPUT) {
+      showStatus("Input too large. Max 100KB.", "error");
+      return;
+    }
 
-        const validation = validateData(data);
-        if (!validation.valid) {
-          showStatus(validation.error, 'error');
-          return;
-        }
+    var data;
+    try {
+      data = parseJSON(input);
+    } catch (e) {
+      showStatus("Invalid JSON: " + e.message, "error");
+      return;
+    }
 
-        if (validation.warnings.length > 0) {
-          showStatus('Generated with warnings: ' + validation.warnings.join('; '), 'warning');
-        } else {
-          showStatus('Heatmap generated successfully!', 'success');
-        }
+    var validation = validateData(data);
+    if (!validation.valid) {
+      showStatus(validation.error, "error");
+      return;
+    }
 
-        renderHeatmap(data);
-      }
+    if (validation.warnings.length > 0) {
+      showStatus("Generated with warnings: " + validation.warnings.join("; "), "warning");
+    } else {
+      showStatus("Heatmap generated!", "success");
+    }
 
-      function parseInput(input) {
-        let jsonStr = input;
-        
-        const codeBlockMatch = input.match(/```(?:json)?\s*([\s\S]*?)```/);
-        if (codeBlockMatch) {
-          jsonStr = codeBlockMatch[1].trim();
-        }
+    renderHeatmap(data);
+  }
 
-        return JSON.parse(jsonStr);
-      }
+  function parseJSON(input) {
+    var str = input;
+    var match = input.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (match) {
+      str = match[1].trim();
+    }
+    return JSON.parse(str);
+  }
 
-      function validateData(data) {
-        const result = { valid: false, error: '', warnings: [] };
+  function validateData(data) {
+    var result = {valid: false, error: "", warnings: []};
 
-        if (!data || typeof data !== 'object') {
-          result.error = 'Data must be a JSON object.';
-          return result;
-        }
+    if (!data || typeof data !== "object") {
+      result.error = "Data must be a JSON object.";
+      return result;
+    }
 
-        if (!data.competitors || typeof data.competitors !== 'object') {
-          result.error = 'Missing "competitors" object. Expected format: { "competitors": { "Company": { "Feature": { "score": 1-5, "comment": "..." } } } }';
-          return result;
-        }
+    if (!data.competitors || typeof data.competitors !== "object") {
+      result.error = "Missing competitors object.";
+      return result;
+    }
 
-        const competitors = Object.keys(data.competitors);
-        if (competitors.length === 0) {
-          result.error = 'No competitors found in data.';
-          return result;
-        }
+    var comps = Object.keys(data.competitors);
+    if (comps.length === 0) {
+      result.error = "No competitors found.";
+      return result;
+    }
 
-        if (competitors.length > MAX_COMPETITORS) {
-          result.error = 'Too many competitors. Maximum ' + MAX_COMPETITORS + ' allowed.';
-          return result;
-        }
+    if (comps.length > MAX_COMPETITORS) {
+      result.error = "Too many competitors. Max " + MAX_COMPETITORS + ".";
+      return result;
+    }
 
-        const allFeatures = new Set();
-        for (const comp of competitors) {
-          const compData = data.competitors[comp];
-          if (!compData || typeof compData !== 'object') {
-            result.error = 'Invalid data for competitor "' + truncateText(comp, 30) + '".';
-            return result;
-          }
-          Object.keys(compData).forEach(function(f) { allFeatures.add(f); });
-        }
-
-        if (allFeatures.size === 0) {
-          result.error = 'No features found in data.';
-          return result;
-        }
-
-        if (allFeatures.size > MAX_FEATURES) {
-          result.error = 'Too many features. Maximum ' + MAX_FEATURES + ' allowed.';
-          return result;
-        }
-
-        for (const comp of competitors) {
-          const compData = data.competitors[comp];
-          for (const feature of Object.keys(compData)) {
-            const featureData = compData[feature];
-            if (!featureData || typeof featureData !== 'object') {
-              result.warnings.push('Invalid format for ' + truncateText(comp, 20) + '/' + truncateText(feature, 20));
-              continue;
-            }
-
-            let score = featureData.score;
-            if (typeof score === 'string') {
-              score = parseFloat(score);
-            }
-            if (typeof score !== 'number' || isNaN(score)) {
-              result.warnings.push('Invalid score for ' + truncateText(comp, 20) + '/' + truncateText(feature, 20));
-            } else if (score < 1 || score > 5) {
-              result.warnings.push('Score out of range (clamped) for ' + truncateText(comp, 20) + '/' + truncateText(feature, 20));
-            }
-          }
-        }
-
-        result.valid = true;
+    var features = new Set();
+    for (var i = 0; i < comps.length; i++) {
+      var compData = data.competitors[comps[i]];
+      if (!compData || typeof compData !== "object") {
+        result.error = "Invalid data for " + comps[i];
         return result;
       }
+      var feats = Object.keys(compData);
+      for (var j = 0; j < feats.length; j++) {
+        features.add(feats[j]);
+      }
+    }
 
-      function renderHeatmap(data) {
-        const competitors = Object.keys(data.competitors);
-        const allFeatures = new Set();
-        competitors.forEach(function(comp) {
-          Object.keys(data.competitors[comp]).forEach(function(f) { allFeatures.add(f); });
-        });
-        const features = Array.from(allFeatures);
+    if (features.size === 0) {
+      result.error = "No features found.";
+      return result;
+    }
 
-        while (elements.heatmapTable.firstChild) {
-          elements.heatmapTable.removeChild(elements.heatmapTable.firstChild);
+    if (features.size > MAX_FEATURES) {
+      result.error = "Too many features. Max " + MAX_FEATURES + ".";
+      return result;
+    }
+
+    result.valid = true;
+    return result;
+  }
+
+  function renderHeatmap(data) {
+    var comps = Object.keys(data.competitors);
+    var featureSet = new Set();
+    for (var i = 0; i < comps.length; i++) {
+      var feats = Object.keys(data.competitors[comps[i]]);
+      for (var j = 0; j < feats.length; j++) {
+        featureSet.add(feats[j]);
+      }
+    }
+    var features = Array.from(featureSet);
+
+    heatmapTable.innerHTML = "";
+
+    var thead = document.createElement("thead");
+    var headerRow = document.createElement("tr");
+    
+    var cornerTh = document.createElement("th");
+    cornerTh.className = "corner-cell";
+    headerRow.appendChild(cornerTh);
+
+    for (var f = 0; f < features.length; f++) {
+      var th = document.createElement("th");
+      th.textContent = truncate(features[f], 20);
+      th.title = features[f];
+      headerRow.appendChild(th);
+    }
+    thead.appendChild(headerRow);
+    heatmapTable.appendChild(thead);
+
+    var tbody = document.createElement("tbody");
+    for (var c = 0; c < comps.length; c++) {
+      var row = document.createElement("tr");
+      
+      var labelTd = document.createElement("td");
+      labelTd.className = "row-label";
+      labelTd.textContent = truncate(comps[c], 25);
+      labelTd.title = comps[c];
+      row.appendChild(labelTd);
+
+      for (var ff = 0; ff < features.length; ff++) {
+        var td = document.createElement("td");
+        td.className = "score-cell";
+
+        var featData = data.competitors[comps[c]][features[ff]];
+        var score = 0;
+        var comment = "No data";
+
+        if (featData && typeof featData === "object") {
+          score = parseInt(featData.score, 10) || 0;
+          if (score < 1) score = 1;
+          if (score > 5) score = 5;
+          comment = featData.comment || "No comment";
         }
 
-        const thead = document.createElement('thead');
-        const headerRow = document.createElement('tr');
-        
-        const cornerTh = document.createElement('th');
-        cornerTh.className = 'corner';
-        cornerTh.setAttribute('scope', 'col');
-        headerRow.appendChild(cornerTh);
-
-        features.forEach(function(feature) {
-          const th = document.createElement('th');
-          th.className = 'feature-header';
-          th.setAttribute('scope', 'col');
-          th.textContent = truncateText(feature, MAX_FEATURE_LENGTH);
-          th.title = feature;
-          headerRow.appendChild(th);
-        });
-
-        thead.appendChild(headerRow);
-        elements.heatmapTable.appendChild(thead);
-
-        const tbody = document.createElement('tbody');
-        
-        competitors.forEach(function(competitor) {
-          const row = document.createElement('tr');
-          
-          const nameTd = document.createElement('td');
-          nameTd.className = 'competitor-name';
-          nameTd.textContent = truncateText(competitor, MAX_NAME_LENGTH);
-          nameTd.title = competitor;
-          row.appendChild(nameTd);
-
-          features.forEach(function(feature) {
-            const td = document.createElement('td');
-            td.className = 'heatmap-cell';
-            td.setAttribute('tabindex', '0');
-            td.setAttribute('role', 'gridcell');
-
-            const featureData = data.competitors[competitor][feature];
-            let score = 0;
-            let comment = 'No data available';
-
-            if (featureData && typeof featureData === 'object') {
-              score = parseFloat(featureData.score) || 0;
-              score = Math.max(1, Math.min(5, Math.round(score)));
-              comment = featureData.comment || 'No comment provided';
-            }
-
-            if (score > 0) {
-              td.style.backgroundColor = getScoreColor(score);
-              td.textContent = score;
-            } else {
-              td.style.backgroundColor = 'var(--bg-tertiary)';
-              td.textContent = '—';
-              td.style.color = 'var(--text-muted)';
-            }
-
-            td.setAttribute('data-competitor', competitor);
-            td.setAttribute('data-feature', feature);
-            td.setAttribute('data-score', score);
-            td.setAttribute('data-comment', truncateText(comment, MAX_COMMENT_LENGTH));
-            td.setAttribute('aria-label', competitor + ', ' + feature + ': score ' + score);
-
-            td.addEventListener('click', handleCellClick);
-            td.addEventListener('keydown', handleCellKeydown);
-
-            row.appendChild(td);
-          });
-
-          tbody.appendChild(row);
-        });
-
-        elements.heatmapTable.appendChild(tbody);
-        elements.heatmapSection.classList.add('visible');
-        elements.heatmapSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-
-      function getScoreColor(score) {
-        const colors = {
-          1: 'hsl(0, 70%, 45%)',
-          2: 'hsl(25, 70%, 50%)',
-          3: 'hsl(45, 70%, 45%)',
-          4: 'hsl(90, 50%, 40%)',
-          5: 'hsl(140, 60%, 38%)'
-        };
-        return colors[score] || 'hsl(0, 0%, 30%)';
-      }
-
-      let activeCell = null;
-
-      function handleCellClick(e) {
-        e.stopPropagation();
-        const cell = e.currentTarget;
-        
-        if (activeCell === cell && elements.tooltip.classList.contains('visible')) {
-          hideTooltip();
-          return;
-        }
-        
-        showTooltip(cell);
-      }
-
-      function handleCellKeydown(e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          handleCellClick(e);
-        }
-      }
-
-      function showTooltip(cell) {
-        activeCell = cell;
-        const competitor = cell.getAttribute('data-competitor');
-        const feature = cell.getAttribute('data-feature');
-        const score = cell.getAttribute('data-score');
-        const comment = cell.getAttribute('data-comment');
-
-        elements.tooltipHeader.textContent = competitor + ' → ' + feature;
-        elements.tooltipScore.textContent = 'Score: ' + score + '/5';
-        elements.tooltipComment.textContent = comment;
-
-        elements.tooltip.classList.add('visible');
-        elements.tooltip.setAttribute('aria-hidden', 'false');
-
-        positionTooltip(cell);
-      }
-
-      function positionTooltip(cell) {
-        const rect = cell.getBoundingClientRect();
-        const tooltipRect = elements.tooltip.getBoundingClientRect();
-        const padding = 10;
-
-        let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
-        let top = rect.top - tooltipRect.height - padding;
-
-        if (top < padding) {
-          top = rect.bottom + padding;
+        if (score > 0) {
+          td.style.backgroundColor = scoreColors[score];
+          td.textContent = score;
+        } else {
+          td.style.backgroundColor = "#374151";
+          td.textContent = "-";
         }
 
-        if (left < padding) {
-          left = padding;
-        } else if (left + tooltipRect.width > window.innerWidth - padding) {
-          left = window.innerWidth - tooltipRect.width - padding;
-        }
+        td.setAttribute("data-comp", comps[c]);
+        td.setAttribute("data-feat", features[ff]);
+        td.setAttribute("data-score", score);
+        td.setAttribute("data-comment", comment);
 
-        elements.tooltip.style.left = left + 'px';
-        elements.tooltip.style.top = top + 'px';
+        td.addEventListener("click", handleCellClick);
+
+        row.appendChild(td);
       }
+      tbody.appendChild(row);
+    }
+    heatmapTable.appendChild(tbody);
 
-      function hideTooltip() {
-        activeCell = null;
-        elements.tooltip.classList.remove('visible');
-        elements.tooltip.setAttribute('aria-hidden', 'true');
-      }
+    heatmapCard.classList.add("show");
+    heatmapCard.scrollIntoView({behavior: "smooth", block: "nearest"});
+  }
 
-      function handleOutsideClick(e) {
-        if (!elements.tooltip.classList.contains('visible')) {
-          return;
-        }
-        
-        if (!elements.tooltip.contains(e.target) && !e.target.classList.contains('heatmap-cell')) {
-          hideTooltip();
-        }
-      }
+  function handleCellClick(e) {
+    var cell = e.currentTarget;
+    var comp = cell.getAttribute("data-comp");
+    var feat = cell.getAttribute("data-feat");
+    var score = cell.getAttribute("data-score");
+    var comment = cell.getAttribute("data-comment");
 
-      function handleTooltipKeyboard(e) {
-        if (e.key === 'Escape') {
-          hideTooltip();
-        }
-      }
+    popupTitle.textContent = comp + " - " + feat;
+    popupScore.textContent = "Score: " + score + "/5";
+    popupComment.textContent = comment;
 
-      function handleClear() {
-        elements.jsonInput.value = '';
-        elements.heatmapSection.classList.remove('visible');
-        while (elements.heatmapTable.firstChild) {
-          elements.heatmapTable.removeChild(elements.heatmapTable.firstChild);
-        }
-        hideTooltip();
-        showStatus('Cleared. Ready for new data.', 'success');
-        elements.jsonInput.focus();
-      }
+    popupOverlay.classList.add("show");
+  }
 
-      function showStatus(message, type) {
-        elements.statusMessage.textContent = message;
-        elements.statusMessage.className = 'status-message visible ' + type;
-      }
+  function hidePopup() {
+    popupOverlay.classList.remove("show");
+  }
 
-      function truncateText(text, maxLength) {
-        if (!text) return '';
-        const str = String(text);
-        if (str.length <= maxLength) return str;
-        return str.substring(0, maxLength - 1) + '…';
-      }
+  function handleClear() {
+    jsonInput.value = "";
+    heatmapCard.classList.remove("show");
+    heatmapTable.innerHTML = "";
+    hidePopup();
+    showStatus("Cleared.", "success");
+  }
 
-      init();
-    })();
-  </script>
+  function showStatus(msg, type) {
+    statusBox.textContent = msg;
+    statusBox.className = "status-box show " + type;
+  }
+
+  function truncate(str, len) {
+    if (!str) return "";
+    if (str.length <= len) return str;
+    return str.substring(0, len - 1) + "...";
+  }
+
+  init();
+})();
+</script>
 
 </body>
-    </html>
+</html>
