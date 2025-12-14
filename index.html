@@ -111,6 +111,7 @@ h1 {
 }
 
 .copy-prompt-btn {
+  display: block;
   width: 100%;
   margin-top: 1rem;
 }
@@ -148,12 +149,14 @@ textarea::placeholder {
 
 .btn-group {
   display: flex;
+  flex-direction: row;
   gap: 0.75rem;
   margin-top: 1rem;
   flex-wrap: wrap;
 }
 
 .btn {
+  display: inline-block;
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: var(--radius);
@@ -163,6 +166,10 @@ textarea::placeholder {
   transition: all 0.2s;
   min-height: 44px;
   min-width: 44px;
+  text-align: center;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .btn-primary {
@@ -431,6 +438,7 @@ footer {
 }
 
 .example-toggle {
+  display: block;
   background: none;
   border: none;
   color: var(--accent);
@@ -439,6 +447,11 @@ footer {
   padding: 0.5rem 0;
   text-decoration: underline;
   min-height: 44px;
+  width: 100%;
+  text-align: left;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .example-toggle:hover,
@@ -474,20 +487,34 @@ footer {
 
   .card {
     padding: 1rem;
+    overflow: visible;
   }
 
   .prompt-recipe {
     font-size: 0.75rem;
     padding: 0.75rem;
-    padding-right: 3.5rem;
+    overflow-x: auto;
   }
 
   .btn-group {
+    display: flex;
     flex-direction: column;
   }
 
   .btn {
+    display: block;
     width: 100%;
+  }
+
+  .copy-prompt-btn {
+    display: block;
+    width: 100%;
+  }
+
+  .example-toggle {
+    display: block;
+    width: 100%;
+    text-align: center;
   }
 
   .heatmap-table th,
@@ -507,7 +534,7 @@ footer {
 <body>
   <div class="container">
     <header>
-      <h1>Competitive Heatmap Visualizer</h1>
+      <h1>📊 Competitive Heatmap Visualizer</h1>
       <p class="subtitle">Transform LLM competitive analysis into visual insights</p>
     </header>
 
